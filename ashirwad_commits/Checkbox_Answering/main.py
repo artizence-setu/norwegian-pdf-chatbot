@@ -31,7 +31,7 @@ def gpt_embedding(text):
   client = OpenAI(api_key ='sk-proj-Qjb8HmX7anyLgGATenZaT3BlbkFJ2rxn0QXqk1ldzQmjjSiG')
   response = client.embeddings.create(
     input=text,
-    model="text-embedding-ada-002"
+    model="text-embedding-3-large"
   )
 
   return response.data[0].embedding
@@ -197,8 +197,7 @@ def generating_pdf_questions_embedding(pdf_questions):
       vector_dict.append([
       gpt_embedding(preprocess(x)),
       preprocess(x),
-      ]
-      )
+      ])
     return vector_dict
 
 def predict(question_ask):
@@ -253,25 +252,42 @@ if __name__=="__main__":
 
     questions_embedding = generating_pdf_questions_embedding(questions)
 
-    # user_questions = [
-    #     'Kjenner du til om det er utført arbeid på bad/våtrom?',
-    #     "ble det lagt ny membran?",
-    #     "Foreligger det samsvarserklæring?",
-    #     "er det foretatt radon måling?",
-    #     "er det automat eller skrusikringer?",
-    #     "Ble tettesjikt/membran/sluk oppgradert/fornyet?"
-    # ]
+    user_questions = [
+        'Kjenner du til om det er utført arbeid på bad/våtrom?',
+        "ble det lagt ny membran?",
+        "Foreligger det samsvarserklæring?",
+        "er det foretatt radon måling?",
+        "er det automat eller skrusikringer?",
+        "Ble tettesjikt/membran/sluk oppgradert/fornyet?",
+        "Kjenner du til om det er utført arbeid på bad/våtrom?",
+        "Kjenner du til feil eller om har vært utført arbeid/kontroll på vann/avløp?",
+        "Kjenner du til om det er/har vært utført arbeid på el-anlegget eller andre installasjoner (f.eks. oljetank, sentralfyr, ventilasjon)?",
+        "Kjenner du til om det er utført kontroll av el-anlegget og/eller andre installasjoner (f.eks. oljetank, sentralfyr, ventilasjon)?",
+        "Kjenner du til om det har vært utført arbeid på terrasse/garasje/tak/fasade?",
+        "Er det foretatt radonmåling?",
+        "Kjenner du til om det er/har vært sopp/råteskader/insekter/skadedyr i sameiet/laget/selskapet (fellesareal eller i andre boliger) som rotter, mus, maur eller lignende?",
+        "Hva er eiers navn?",
+        "Er det skrusikringer eller automatsikringer?",
+        "Fortell meg om sluket"
+    ]
 
-    temp = True
-
-    while temp == True:
-
-        user_question = input("Please Enter Your Question: ")
-
-        question,answere = predict(user_question)
+    for i in user_questions:
+        question,answere = predict(i)
+        print("question: ",i)
         print("*"*20)
-        print("answer",answere)
+        print("answer: ",answere)
         print("*"*20)
-        print("Do you want to continue: "," 1:Yes", " 0:No")
-        temp = bool(input())
-        print("*"*20)
+
+    # temp = True
+
+    # while temp == True:
+
+    #     user_question = input("Please Enter Your Question: ")
+
+    #     question,answere = predict(user_question)
+    #     print("*"*20)
+    #     print("answer",answere)
+    #     print("*"*20)
+    #     print("Do you want to continue: "," 1:Yes", " 0:No")
+    #     temp = bool(input())
+    #     print("*"*20)
