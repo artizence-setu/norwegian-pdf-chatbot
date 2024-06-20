@@ -6,28 +6,15 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 import undetected_chromedriver as uc
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
 import io
 import requests
 import time
 import os
-import chromedriver_binary
 
-
-chrome_options = Options()
-chrome_options.add_argument("--headless")
-chrome_options.add_argument("--no-sandbox")
-chrome_options.add_argument("--disable-dev-shm-usage")
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
-wait = WebDriverWait(driver, 3)
-
-
-
-def scarper_func(link, pdf_file_name):
+def scraper_func(link, pdf_file_name):
     try:
         print('Starting Driver')
+
         options = uc.ChromeOptions()
         options.add_argument('--incognito')
         options.add_argument('--disable-popup-blocking')
@@ -38,8 +25,9 @@ def scarper_func(link, pdf_file_name):
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument('--headless=new')
         options.add_argument('--ignore-certificate-errors')
+
         driver = uc.Chrome(options=options)
-        wait = WebDriverWait(driver, 3)
+        wait = WebDriverWait(driver, 10)
 
         driver.get(link)
 
@@ -57,11 +45,10 @@ def scarper_func(link, pdf_file_name):
         pdf_button = driver.find_element(By.CSS_SELECTOR, 'button[class="ffe-button ffe-button--action style_salgsoppgave__3yBKD"]')
         pdf_button.click()
 
-
         wait.until(EC.presence_of_element_located(
             (By.CSS_SELECTOR, 'button[class="ffe-button ffe-button--primary style_download-button__R7XCj"]')))
         download_button = driver.find_element(By.CSS_SELECTOR,
-                                        'button[class="ffe-button ffe-button--primary style_download-button__R7XCj"]')
+                                              'button[class="ffe-button ffe-button--primary style_download-button__R7XCj"]')
         download_button.click()
         time.sleep(3)
         response = requests.get(driver.current_url)
@@ -70,10 +57,10 @@ def scarper_func(link, pdf_file_name):
 
         if response.status_code == 200:
             pdf_file = io.BytesIO(response.content)
+            print(f"Current working directory: {os.getcwd()}")
             local_file_path = os.path.join(os.getcwd(), pdf_file_name)
             with open(local_file_path, 'wb') as f:
                 f.write(pdf_file.read())
-
             print(f"PDF saved to {local_file_path}")
             driver.quit()
             return True
@@ -81,19 +68,20 @@ def scarper_func(link, pdf_file_name):
             print("Failed to retrieve the PDF.")
             driver.quit()
             return False
-        
+
     except Exception as e:
         print(e)
+        if 'driver' in locals():
+            driver.quit()
 
+# Example usage:
+# if __name__ == '__main__':
+#     links =  ['https://www.finn.no/realestate/homes/ad.html?finnkode=351952578',
+#              'https://www.finn.no/realestate/project/ad.html?finnkode=296616815&location=1.20061.20511',
+#              'https://www.finn.no/realestate/homes/ad.html?finnkode=352378840',
+#              'https://www.finn.no/realestate/homes/ad.html?finnkode=352617896']
 
-if __name__ == '__main__':
-    links =  ['https://www.finn.no/realestate/homes/ad.html?finnkode=351952578',
-             'https://www.finn.no/realestate/project/ad.html?finnkode=296616815&location=1.20061.20511',
-             'https://www.finn.no/realestate/homes/ad.html?finnkode=352378840',
-             'https://www.finn.no/realestate/homes/ad.html?finnkode=352617896']
-
-    for i in links:    
-        filename = i.split("finnkode=")[-1] +".pdf"
-        status = scarper_func(i,filename)
-        print(filename,status)
-    
+#     for i in links:    
+#         filename = i.split("finnkode=")[-1] +".pdf"
+#         status = scraper_func(i, filename)
+#         print(filename, status)
