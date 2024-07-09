@@ -1,0 +1,11 @@
+PyPDF2
+langchain_community
+langchain_openai
+langchain
+openai
+pandas
+scikit-learn
+numpy
+PyMuPDF
+nltk
+flask
