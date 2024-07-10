@@ -12,7 +12,7 @@ def index():
         pdf = data.get('pdf')
         pdf_ch = pdf + '.pdf'
         filename = os.path.join('files', pdf_ch) 
-        questions = data.get('questions')  # Note: Changed 'question' to 'questions'
+        questions = data.get('questions')  
 
         if pdf is None or questions is None:
             return jsonify({'error': 'Missing data in request'}), 400
