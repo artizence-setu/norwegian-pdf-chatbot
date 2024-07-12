@@ -8,6 +8,8 @@ import requests
 
 URL = 'https://www.finn.no/realestate/homes/ad.html?finnkode=358548133'
 
+# URL = 'https://www.finn.no/realestate/homes/ad.html?finnkode=357923689'
+
 # Set up Chrome options to run headless
 chrome_options = Options()
 chrome_options.add_argument("--headless")
@@ -22,30 +24,35 @@ driver.get(URL)
 # Locate all <div> elements by their class name
 div_elements = driver.find_elements(By.CLASS_NAME, 'pb-16.mt-40.border-b')
 
-# Get the fourth <div> element
-fourth_div_element = div_elements[3]
 
-# Find the <a> tag within the fourth <div> element
-a_tag = fourth_div_element.find_element(By.TAG_NAME, 'a')
+try:
+    # Get the fourth <div> element
+    fourth_div_element = div_elements[3]
 
-# Extract the href attribute (the link)
-link = a_tag.get_attribute('href')
+    # Find the <a> tag within the fourth <div> element
+    a_tag = fourth_div_element.find_element(By.TAG_NAME, 'a')
 
-driver.get(link)
+    # Extract the href attribute (the link)
+    link = a_tag.get_attribute('href')
 
-a_element = driver.find_elements(By.CSS_SELECTOR, 'a.dnb-button.dnb-button--primary.dnb-button--has-text.theme-dark__button__secondary.dnb-anchor--no-style.dnb-a')
+    driver.get(link)
 
-# Extract the href attribute (the link)
-pdf = a_element[1].get_attribute('href')
+    a_element = driver.find_elements(By.CSS_SELECTOR, 'a.dnb-button.dnb-button--primary.dnb-button--has-text.theme-dark__button__secondary.dnb-anchor--no-style.dnb-a')
 
-response = requests.get(pdf)
+    # Extract the href attribute (the link)
+    pdf = a_element[1].get_attribute('href')
 
-# Save the PDF to a file
-pdf_filename = 'document.pdf'  # Specify the desired filename
-with open(pdf_filename, 'wb') as file:
-    file.write(response.content)
+    response = requests.get(pdf)
 
-print(f"PDF downloaded and saved as {pdf_filename}")
+    # Save the PDF to a file
+    pdf_filename = 'document.pdf'  # Specify the desired filename
+    with open(pdf_filename, 'wb') as file:
+        file.write(response.content)
+
+    print(f"PDF downloaded and saved as {pdf_filename}")
+
+except(Exception):
+    print("House Already Sold.")
 
 # Close the WebDriver
 driver.quit()
