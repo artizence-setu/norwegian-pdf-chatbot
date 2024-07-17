@@ -85,8 +85,8 @@ def check_status():
     else:
         return jsonify(conversation_id=conversation_id, response="Scraping is still in progress. Please wait.")
 
-def main():
-    app.run(debug=True)
+# def main():
+#     app.run(debug=True)
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
